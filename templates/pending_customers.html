@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+```
+<title>Pending Customers</title>
+
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}">
+```
+
+</head>
+
+<body>
+
+<!-- Sidebar -->
+
+<div class="sidebar">
+
+```
+<h2>Udhaar System</h2>
+
+<a href="{{ url_for('dashboard') }}">
+    🏠 Dashboard
+</a>
+
+<a href="{{ url_for('customers') }}">
+    👥 Customers
+</a>
+
+<a href="{{ url_for('customer_search') }}">
+    🔎 Customer Details
+</a>
+
+<a href="{{ url_for('udhaar') }}">
+    💰 Udhaar
+</a>
+
+<a href="{{ url_for('payments') }}">
+    💵 Payments
+</a>
+
+<a href="{{ url_for('pending_customers') }}">
+    ⏳ Pending Customers
+</a>
+
+<a href="{{ url_for('reports') }}">
+    📊 Reports
+</a>
+
+<a href="{{ url_for('login') }}">
+    🚪 Logout
+</a>
+```
+
+</div>
+
+<!-- Main Content -->
+
+<div class="main-content">
+
+```
+<h1>⏳ Pending Customers</h1>
+
+<p>
+    Customers who still have an outstanding Udhaar amount.
+</p>
+
+<br>
+
+
+{% if pending %}
+
+<table>
+
+    <tr>
+
+        <th>Customer</th>
+
+        <th>Mobile</th>
+
+        <th>Total Udhaar</th>
+
+        <th>Total Paid</th>
+
+        <th>Remaining</th>
+
+        <th>Actions</th>
+
+    </tr>
+
+
+    {% for customer in pending %}
+
+    <tr>
+
+        <!-- CUSTOMER NAME -->
+
+        <td>
+            {{ customer.customer_name }}
+        </td>
+
+
+        <!-- MOBILE -->
+
+        <td>
+            {{ customer.mobile }}
+        </td>
+
+
+        <!-- TOTAL UDHAAR -->
+
+        <td>
+            ₹{{ customer.total_udhaar }}
+        </td>
+
+
+        <!-- TOTAL PAID -->
+
+        <td>
+            ₹{{ customer.total_paid }}
+        </td>
+
+
+        <!-- REMAINING -->
+
+        <td>
+
+            <strong>
+                ₹{{ customer.remaining }}
+            </strong>
+
+        </td>
+
+
+        <!-- ACTIONS -->
+
+        <td>
+
+            <a href="{{ url_for('customer_details', id=customer.customer_id) }}">
+                View Details
+            </a>
+
+            &nbsp; | &nbsp;
+
+            <a href="{{ url_for('customer_statement', customer_id=customer.customer_id) }}">
+                📄 Statement
+            </a>
+
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+
+{% else %}
+
+    <h3>
+        🎉 No Pending Customers!
+    </h3>
+
+    <p>
+        All customers have cleared their Udhaar.
+    </p>
+
+{% endif %}
+
+
+<br>
+
+
+<a class="back-button"
+   href="{{ url_for('dashboard') }}">
+
+    ← Back to Dashboard
+
+</a>
+```
+
+</div>
+
+</body>
+
+</html>

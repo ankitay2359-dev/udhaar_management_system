@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+```
+<title>Payments</title>
+
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}">
+```
+
+</head>
+
+<body>
+
+<div class="sidebar">
+
+```
+<h2>Udhaar System</h2>
+
+<a href="/dashboard">🏠 Dashboard</a>
+<a href="/customers">👥 Customers</a>
+<a href="/udhaar">💰 Udhaar</a>
+<a href="/payments">💵 Payments</a>
+<a href="/reports">📊 Reports</a>
+<a href="/">🚪 Logout</a>
+```
+
+</div>
+
+<div class="main-content">
+
+```
+<h1>Payment Management</h1>
+
+
+<!-- ADD PAYMENT -->
+
+<h2>Add Payment</h2>
+
+<form method="POST">
+
+    <label>Customer</label><br>
+
+    <select name="customer_id" required>
+
+        <option value="">-- Select Customer --</option>
+
+        {% for customer in customers %}
+
+        <option value="{{ customer.customer_id }}">
+            {{ customer.customer_name }} (ID: {{ customer.customer_id }})
+        </option>
+
+        {% endfor %}
+
+    </select>
+
+    <br><br>
+
+
+    <label>Amount Paid</label><br>
+
+    <input
+        type="number"
+        step="0.01"
+        min="0"
+        name="amount_paid"
+        placeholder="Enter Amount"
+        required
+    >
+
+    <br><br>
+
+
+    <label>Payment Date</label><br>
+
+    <input
+        type="date"
+        name="payment_date"
+        required
+    >
+
+    <br><br>
+
+
+    <label>Payment Method</label><br>
+
+    <select name="payment_method" required>
+
+        <option value="">-- Select Payment Method --</option>
+
+        <option value="Cash">💵 Cash</option>
+
+        <option value="UPI">📱 UPI</option>
+
+        <option value="Card">💳 Card</option>
+
+        <option value="Bank Transfer">🏦 Bank Transfer</option>
+
+        <option value="Cheque">📝 Cheque</option>
+
+        <option value="Other">🔹 Other</option>
+
+    </select>
+
+    <br><br>
+
+
+    <button type="submit">
+        Add Payment
+    </button>
+
+</form>
+
+
+<hr>
+
+
+<!-- PAYMENT HISTORY -->
+
+<h2>Payment History</h2>
+
+<table>
+
+    <tr>
+
+        <th>ID</th>
+        <th>Customer</th>
+        <th>Amount Paid</th>
+        <th>Payment Date</th>
+        <th>Payment Method</th>
+        <th>Action</th>
+
+    </tr>
+
+
+    {% for payment in payments %}
+
+    <tr>
+
+        <td>
+            {{ payment.payment_id }}
+        </td>
+
+        <td>
+            {{ payment.customer_name }}
+            <br>
+            <small>ID: {{ payment.customer_id }}</small>
+        </td>
+
+        <td>
+            ₹{{ payment.amount_paid }}
+        </td>
+
+        <td>
+            {{ payment.payment_date }}
+        </td>
+
+        <td>
+
+            {% if payment.payment_method == "Cash" %}
+                💵 Cash
+
+            {% elif payment.payment_method == "UPI" %}
+                📱 UPI
+
+            {% elif payment.payment_method == "Card" %}
+                💳 Card
+
+            {% elif payment.payment_method == "Bank Transfer" %}
+                🏦 Bank Transfer
+
+            {% elif payment.payment_method == "Cheque" %}
+                📝 Cheque
+
+            {% elif payment.payment_method == "Other" %}
+                🔹 Other
+
+            {% else %}
+                -
+            {% endif %}
+
+        </td>
+
+        <td>
+
+            <a href="/edit_payment/{{ payment.payment_id }}">
+                Edit
+            </a>
+
+            |
+
+            <a
+                href="/delete_payment/{{ payment.payment_id }}"
+                onclick="return confirm('Delete this payment?')"
+            >
+                Delete
+            </a>
+
+            |
+
+            <a href="{{ url_for('payment_receipt', payment_id=payment.payment_id) }}">
+                🧾 Generate Receipt
+            </a>
+
+        </td>
+
+    </tr>
+
+    {% else %}
+
+    <tr>
+        <td colspan="6">
+            No payment records found.
+        </td>
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+
+<hr>
+
+
+<!-- CUSTOMER PAYMENT SUMMARY -->
+
+<h2>Customer Payment Summary</h2>
+
+<table>
+
+    <tr>
+
+        <th>Customer</th>
+        <th>Total Udhaar</th>
+        <th>Total Paid</th>
+        <th>Remaining</th>
+
+    </tr>
+
+
+    {% for customer in payment_summary %}
+
+    <tr>
+
+        <td>
+            {{ customer.customer_name }}
+        </td>
+
+        <td>
+            ₹{{ customer.total_udhaar }}
+        </td>
+
+        <td>
+            ₹{{ customer.total_paid }}
+        </td>
+
+        <td>
+            <strong>
+                ₹{{ customer.remaining }}
+            </strong>
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+</table>
+```
+
+</div>
+
+</body>
+
+</html>

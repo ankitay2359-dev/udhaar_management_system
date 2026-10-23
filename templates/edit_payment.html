@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+```
+<title>Edit Payment</title>
+
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}">
+```
+
+</head>
+
+<body>
+
+<header>
+
+```
+<h1>Edit Payment</h1>
+```
+
+</header>
+
+<div class="container">
+
+```
+<form method="POST">
+
+
+    <!-- AMOUNT PAID -->
+
+    <label>
+        Amount Paid
+    </label>
+
+    <br>
+
+    <input
+        type="number"
+        step="0.01"
+        min="0"
+        name="amount_paid"
+        value="{{ payment.amount_paid }}"
+        required
+    >
+
+    <br>
+    <br>
+
+
+    <!-- PAYMENT DATE -->
+
+    <label>
+        Payment Date
+    </label>
+
+    <br>
+
+    <input
+        type="date"
+        name="payment_date"
+        value="{{ payment.payment_date }}"
+        required
+    >
+
+    <br>
+    <br>
+
+
+    <!-- PAYMENT METHOD -->
+
+    <label>
+        Payment Method
+    </label>
+
+    <br>
+
+    <select name="payment_method" required>
+
+        <option value="">
+            -- Select Payment Method --
+        </option>
+
+        <option value="Cash"
+            {% if payment.payment_method == "Cash" %}
+                selected
+            {% endif %}>
+            💵 Cash
+        </option>
+
+        <option value="UPI"
+            {% if payment.payment_method == "UPI" %}
+                selected
+            {% endif %}>
+            📱 UPI
+        </option>
+
+        <option value="Card"
+            {% if payment.payment_method == "Card" %}
+                selected
+            {% endif %}>
+            💳 Card
+        </option>
+
+        <option value="Bank Transfer"
+            {% if payment.payment_method == "Bank Transfer" %}
+                selected
+            {% endif %}>
+            🏦 Bank Transfer
+        </option>
+
+        <option value="Cheque"
+            {% if payment.payment_method == "Cheque" %}
+                selected
+            {% endif %}>
+            📝 Cheque
+        </option>
+
+        <option value="Other"
+            {% if payment.payment_method == "Other" %}
+                selected
+            {% endif %}>
+            🔹 Other
+        </option>
+
+    </select>
+
+    <br>
+    <br>
+
+
+    <!-- UPDATE BUTTON -->
+
+    <button type="submit">
+        Update Payment
+    </button>
+
+</form>
+
+
+<br>
+
+
+<a href="/payments">
+    ⬅ Back to Payments
+</a>
+```
+
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+```
+<title>Customer Statement</title>
+
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}">
+
+<style>
+
+    .statement-header {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 25px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .balance-box {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 25px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .balance-box h2 {
+        margin: 0;
+    }
+
+    .udhaar {
+        color: red;
+        font-weight: bold;
+    }
+
+    .payment {
+        color: green;
+        font-weight: bold;
+    }
+
+    .back-button {
+        display: inline-block;
+        background: #2c3e50;
+        color: white;
+        padding: 10px 18px;
+        text-decoration: none;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+
+    .back-button:hover {
+        background: #1abc9c;
+    }
+
+    .no-data {
+        text-align: center;
+        padding: 15px;
+    }
+
+</style>
+```
+
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+```
+<h2>Udhaar System</h2>
+
+<a href="{{ url_for('dashboard') }}">🏠 Dashboard</a>
+
+<a href="{{ url_for('customers') }}">👥 Customers</a>
+
+<a href="{{ url_for('customer_search') }}">
+    🔎 Customer Details
+</a>
+
+<a href="{{ url_for('udhaar') }}">💰 Udhaar</a>
+
+<a href="{{ url_for('payments') }}">💵 Payments</a>
+
+<a href="{{ url_for('pending_customers') }}">
+    ⏳ Pending Customers
+</a>
+
+<a href="{{ url_for('reports') }}">📊 Reports</a>
+
+<a href="{{ url_for('login') }}">🚪 Logout</a>
+```
+
+</div>
+
+<!-- MAIN CONTENT -->
+
+<div class="main-content">
+
+```
+<a class="back-button"
+   href="{{ url_for('customer_details', id=customer.customer_id) }}"
+    ← Back to Customer Profile
+</a>
+
+<h1>Customer Statement</h1>
+
+<!-- CUSTOMER INFORMATION -->
+
+<div class="statement-header">
+
+    <h2>{{ customer.customer_name }}</h2>
+
+    <p>
+        <strong>Mobile:</strong>
+        {{ customer.mobile or 'Not Available' }}
+    </p>
+
+    <p>
+        <strong>Address:</strong>
+        {{ customer.address or 'Not Available' }}
+    </p>
+
+</div>
+
+<!-- TRANSACTION TABLE -->
+
+<h2>Transaction History</h2>
+
+<table>
+
+    <tr>
+
+        <th>Date</th>
+
+        <th>Type</th>
+
+        <th>Description</th>
+
+        <th>Udhaar</th>
+
+        <th>Payment</th>
+
+        <th>Balance</th>
+
+    </tr>
+
+    {% for transaction in transactions %}
+
+    <tr>
+
+        <td>
+            {{ transaction.transaction_date }}
+        </td>
+
+        <td>
+
+            {% if transaction.transaction_type == 'Udhaar' %}
+
+                <span class="udhaar">
+                    Udhaar
+                </span>
+
+            {% else %}
+
+                <span class="payment">
+                    Payment
+                </span>
+
+            {% endif %}
+
+        </td>
+
+        <td>
+            {{ transaction.description }}
+        </td>
+
+        <td>
+
+            {% if transaction.amount > 0 %}
+
+                ₹{{ transaction.amount }}
+
+            {% else %}
+
+                -
+
+            {% endif %}
+
+        </td>
+
+        <td>
+
+            {% if transaction.paid > 0 %}
+
+                ₹{{ transaction.paid }}
+
+            {% else %}
+
+                -
+
+            {% endif %}
+
+        </td>
+
+        <td>
+            ₹{{ transaction.balance }}
+        </td>
+
+    </tr>
+
+    {% else %}
+
+    <tr>
+
+        <td colspan="6" class="no-data">
+            No transactions found.
+        </td>
+
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+<!-- CURRENT BALANCE -->
+
+<div class="balance-box">
+
+    <h3>Current Outstanding Balance</h3>
+
+    <h2>
+        ₹{{ balance }}
+    </h2>
+
+</div>
+```
+
+</div>
+
+</body>
+
+</html>

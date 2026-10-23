@@ -1,0 +1,721 @@
+```html
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Customer Details</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+
+        .search-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            margin-bottom: 25px;
+        }
+
+        .search-box input {
+            width: 70%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .search-hint {
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .results {
+            margin-top: 20px;
+        }
+
+        .customer-result {
+            background: white;
+            padding: 18px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .customer-result-info {
+            flex: 1;
+        }
+
+        .customer-result-info h3 {
+            margin: 0 0 8px 0;
+        }
+
+        .customer-result-info p {
+            margin: 5px 0;
+            color: #555;
+        }
+
+        .view-button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .view-button:hover {
+            opacity: 0.9;
+        }
+
+        .customer-info {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .summary-cards {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 20px;
+            width: 200px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .summary-card h2 {
+            margin: 10px 0;
+        }
+
+        .udhaar-card h2 {
+            color: red;
+        }
+
+        .paid-card h2 {
+            color: green;
+        }
+
+        .remaining-card h2 {
+            color: #e67e22;
+        }
+
+        .section {
+            margin-top: 30px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .message {
+            padding: 15px;
+            background: #fff3cd;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+
+        .back-button {
+            background: #555;
+            color: white;
+            border: none;
+            padding: 9px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+    <h2>Udhaar System</h2>
+
+    <a href="{{ url_for('dashboard') }}">🏠 Dashboard</a>
+
+    <a href="{{ url_for('customers') }}">👥 Customers</a>
+
+    <a href="{{ url_for('customer_search') }}">🔎 Customer Details</a>
+
+    <a href="{{ url_for('udhaar') }}">💰 Udhaar</a>
+
+    <a href="{{ url_for('payments') }}">💵 Payments</a>
+
+    <a href="{{ url_for('reports') }}">📊 Reports</a>
+
+    <a href="{{ url_for('login') }}">🚪 Logout</a>
+
+</div>
+
+
+<!-- MAIN CONTENT -->
+
+<div class="main-content">
+
+    <h1>Customer Details</h1>
+
+
+    <!-- SEARCH BOX -->
+
+    <div class="search-box">
+
+        <h2>🔎 Search Customer</h2>
+
+        <input
+            type="text"
+            id="customerSearch"
+            placeholder="Search by name, mobile number or Customer ID..."
+            autocomplete="off"
+        >
+
+        <p class="search-hint">
+            You can search using customer name, mobile number or Customer ID.
+        </p>
+
+        <div id="message" class="message">
+            Start typing to search for a customer.
+        </div>
+
+        <div id="searchResults" class="results"></div>
+
+    </div>
+
+
+    <!-- CUSTOMER INFORMATION -->
+
+    <div id="customerData" class="hidden">
+
+        <button class="back-button" onclick="showSearchResults()">
+            ← Back to Search Results
+        </button>
+
+
+        <div class="customer-info">
+
+            <h2 id="name"></h2>
+
+            <p>
+                <strong>Customer ID:</strong>
+                <span id="customerId"></span>
+            </p>
+
+            <p>
+                <strong>Mobile:</strong>
+                <span id="mobile"></span>
+            </p>
+
+            <p>
+                <strong>Address:</strong>
+                <span id="address"></span>
+            </p>
+            <br>
+
+<button
+    class="view-button"
+    onclick="downloadStatement()">
+
+    📄 Download PDF Statement
+
+</button>
+
+        </div>
+
+
+        <!-- FINANCIAL SUMMARY -->
+
+        <h2>Financial Summary</h2>
+
+        <div class="summary-cards">
+
+            <div class="summary-card udhaar-card">
+
+                <h3>Total Udhaar</h3>
+
+                <h2 id="totalUdhaar">₹0</h2>
+
+            </div>
+
+
+            <div class="summary-card paid-card">
+
+                <h3>Total Paid</h3>
+
+                <h2 id="totalPaid">₹0</h2>
+
+            </div>
+
+
+            <div class="summary-card remaining-card">
+
+                <h3>Remaining</h3>
+
+                <h2 id="remaining">₹0</h2>
+
+            </div>
+
+        </div>
+
+
+        <!-- UDHAAR HISTORY -->
+
+        <div class="section">
+
+            <h2>💰 Udhaar History</h2>
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Product</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="udhaarHistory"></tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- PAYMENT HISTORY -->
+
+        <div class="section">
+
+            <h2>💵 Payment History</h2>
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Amount Paid</th>
+                        <th>Date</th>
+                        <th>Payment Method</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="paymentHistory"></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<!-- JAVASCRIPT -->
+
+<script>
+
+const searchBox = document.getElementById("customerSearch");
+
+const customerData = document.getElementById("customerData");
+
+const message = document.getElementById("message");
+
+const searchResults = document.getElementById("searchResults");
+
+
+// --------------------------------------------------
+// SEARCH CUSTOMERS
+// --------------------------------------------------
+
+searchBox.addEventListener("input", function() {
+
+    const search = searchBox.value.trim();
+
+    customerData.classList.add("hidden");
+
+    searchResults.innerHTML = "";
+
+
+    if (search.length === 0) {
+
+        message.style.display = "block";
+
+        message.innerText =
+            "Start typing to search for a customer.";
+
+        return;
+    }
+
+
+    fetch(
+        "{{ url_for('search_customers') }}?search="
+        + encodeURIComponent(search)
+    )
+
+    .then(response => response.json())
+
+    .then(data => {
+
+        if (!data.found) {
+
+            message.style.display = "block";
+
+            message.innerText =
+                "No customer found.";
+
+            return;
+        }
+
+
+        message.style.display = "none";
+
+
+        data.customers.forEach(function(customer) {
+
+            const result = document.createElement("div");
+
+            result.className = "customer-result";
+
+
+            result.innerHTML = `
+
+                <div class="customer-result-info">
+
+                    <h3>👤 ${customer.customer_name}</h3>
+
+                    <p>
+                        🆔 <strong>Customer ID:</strong>
+                        ${customer.customer_id}
+                    </p>
+
+                    <p>
+                        📱 <strong>Mobile:</strong>
+                        ${customer.mobile || "Not Available"}
+                    </p>
+
+                    <p>
+                        📍 <strong>Address:</strong>
+                        ${customer.address || "Not Available"}
+                    </p>
+
+                </div>
+
+
+                <button
+                    class="view-button"
+                    onclick="viewCustomer(${customer.customer_id})">
+
+                    View Details
+
+                </button>
+
+            `;
+
+
+            searchResults.appendChild(result);
+
+        });
+
+    })
+
+    .catch(error => {
+
+        console.error(error);
+
+        message.style.display = "block";
+
+        message.innerText =
+            "Something went wrong. Please try again.";
+
+    });
+
+});
+
+
+// --------------------------------------------------
+// VIEW SELECTED CUSTOMER
+// --------------------------------------------------
+
+function viewCustomer(customerId) {
+
+    fetch(
+        "{{ url_for('get_customer_details') }}?customer_id="
+        + encodeURIComponent(customerId)
+    )
+
+    .then(response => response.json())
+
+    .then(data => {
+
+        if (!data.found) {
+
+            alert("Customer details not found.");
+
+            return;
+        }
+
+
+        // Hide search results
+
+        searchResults.innerHTML = "";
+
+        message.style.display = "none";
+
+        customerData.classList.remove("hidden");
+
+
+        // Customer information
+
+        document.getElementById("name").innerText =
+            data.customer.customer_name;
+
+        document.getElementById("customerId").innerText =
+            data.customer.customer_id;
+
+        document.getElementById("mobile").innerText =
+            data.customer.mobile || "Not Available";
+
+        document.getElementById("address").innerText =
+            data.customer.address || "Not Available";
+
+
+        // Financial summary
+
+        document.getElementById("totalUdhaar").innerText =
+            "₹" + parseFloat(data.total_udhaar).toFixed(2);
+
+        document.getElementById("totalPaid").innerText =
+            "₹" + parseFloat(data.total_paid).toFixed(2);
+
+        document.getElementById("remaining").innerText =
+            "₹" + parseFloat(data.remaining).toFixed(2);
+
+
+        // --------------------------------------------------
+        // UDHAAR HISTORY
+        // --------------------------------------------------
+
+        const udhaarTable =
+            document.getElementById("udhaarHistory");
+
+        udhaarTable.innerHTML = "";
+
+
+        if (!data.udhaar_history ||
+            data.udhaar_history.length === 0) {
+
+            udhaarTable.innerHTML =
+                '<tr><td colspan="3">No Udhaar records found.</td></tr>';
+
+        } else {
+
+            data.udhaar_history.forEach(function(u) {
+
+                udhaarTable.innerHTML += `
+
+                    <tr>
+
+                        <td>${u.product_name}</td>
+
+                        <td>₹${parseFloat(u.amount).toFixed(2)}</td>
+
+                        <td>${u.udhaar_date}</td>
+
+                    </tr>
+
+                `;
+
+            });
+
+        }
+
+
+        // --------------------------------------------------
+        // PAYMENT HISTORY
+        // --------------------------------------------------
+
+        const paymentTable =
+            document.getElementById("paymentHistory");
+
+        paymentTable.innerHTML = "";
+
+
+        if (!data.payment_history ||
+            data.payment_history.length === 0) {
+
+            paymentTable.innerHTML =
+                '<tr><td colspan="3">No payment records found.</td></tr>';
+
+        } else {
+
+            data.payment_history.forEach(function(p) {
+
+                paymentTable.innerHTML += `
+
+                    <tr>
+
+                        <td>₹${parseFloat(p.amount_paid).toFixed(2)}</td>
+
+                        <td>${p.payment_date}</td>
+
+                        <td>${p.payment_method || "Not Available"}</td>
+
+                    </tr>
+
+                `;
+
+            });
+
+        }
+
+    })
+
+    .catch(error => {
+
+        console.error(error);
+
+        alert("Something went wrong while loading customer details.");
+
+    });
+
+}
+
+
+// --------------------------------------------------
+// BACK TO SEARCH RESULTS
+// --------------------------------------------------
+
+function showSearchResults() {
+
+    customerData.classList.add("hidden");
+
+    searchResults.innerHTML = "";
+
+    const search = searchBox.value.trim();
+
+
+    if (search.length > 0) {
+
+        fetch(
+            "{{ url_for('search_customers') }}?search="
+            + encodeURIComponent(search)
+        )
+
+        .then(response => response.json())
+
+        .then(data => {
+
+            if (data.found) {
+
+                message.style.display = "none";
+
+
+                data.customers.forEach(function(customer) {
+
+                    const result = document.createElement("div");
+
+                    result.className = "customer-result";
+
+
+                    result.innerHTML = `
+
+                        <div class="customer-result-info">
+
+                            <h3>👤 ${customer.customer_name}</h3>
+
+                            <p>
+                                🆔 <strong>Customer ID:</strong>
+                                ${customer.customer_id}
+                            </p>
+
+                            <p>
+                                📱 <strong>Mobile:</strong>
+                                ${customer.mobile || "Not Available"}
+                            </p>
+
+                            <p>
+                                📍 <strong>Address:</strong>
+                                ${customer.address || "Not Available"}
+                            </p>
+
+                        </div>
+
+
+                        <button
+                            class="view-button"
+                            onclick="viewCustomer(${customer.customer_id})">
+
+                            View Details
+
+                        </button>
+
+                    `;
+
+                    searchResults.appendChild(result);
+
+                });
+
+            }
+
+        });
+
+    } else {
+
+        message.style.display = "block";
+
+        message.innerText =
+            "Start typing to search for a customer.";
+
+    }
+
+}
+// --------------------------------------------------
+// DOWNLOAD CUSTOMER PDF STATEMENT
+// --------------------------------------------------
+
+function downloadStatement() {
+
+    const customerId =
+        document.getElementById("customerId").innerText;
+
+    if (!customerId) {
+
+        alert("Customer ID not found.");
+
+        return;
+    }
+
+    window.location.href =
+        "/customer_statement/" + customerId;
+}
+</script>
+
+
+</body>
+
+</html>
+```

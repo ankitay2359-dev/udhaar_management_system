@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+```
+<title>Dashboard</title>
+
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}">
+```
+
+</head>
+
+<body>
+
+<!-- ================= SIDEBAR ================= -->
+
+<div class="sidebar">
+
+```
+<h2>Udhaar System</h2>
+
+
+<!-- NAVIGATION -->
+
+<a href="/dashboard">
+    🏠 Dashboard
+</a>
+
+<a href="/customers">
+    👥 Customers
+</a>
+
+<a href="{{ url_for('customer_search') }}">
+    🔎 Customer Details
+</a>
+
+<a href="/udhaar">
+    💰 Udhaar
+</a>
+
+<a href="/payments">
+    💵 Payments
+</a>
+
+<a href="/pending_customers">
+    ⏳ Pending Customers
+</a>
+
+<a href="/reports">
+    📊 Reports
+</a>
+
+<a href="/">
+    🚪 Logout
+</a>
+```
+
+</div>
+
+<!-- ================= MAIN CONTENT ================= -->
+
+<div class="main-content">
+
+```
+<h1>
+    Dashboard
+</h1>
+
+
+<div class="cards">
+
+
+    <!-- TOTAL CUSTOMERS -->
+
+    <div class="card">
+
+        <h3>
+            Customers
+        </h3>
+
+        <h1>
+            {{ total_customers }}
+        </h1>
+
+    </div>
+
+
+    <!-- TOTAL UDHAAR -->
+
+    <div class="card">
+
+        <h3>
+            Udhaar
+        </h3>
+
+        <h1>
+            ₹{{ total_udhaar }}
+        </h1>
+
+    </div>
+
+
+    <!-- TOTAL PAID -->
+
+    <div class="card">
+
+        <h3>
+            Payments
+        </h3>
+
+        <h1>
+            ₹{{ total_paid }}
+        </h1>
+
+    </div>
+
+
+    <!-- REMAINING BALANCE -->
+
+    <div class="card">
+
+        <h3>
+            Remaining Balance
+        </h3>
+
+        <h1>
+            ₹{{ remaining }}
+        </h1>
+
+    </div>
+
+
+    <!-- PENDING CUSTOMERS -->
+
+    <div class="card">
+
+        <h3>
+            ⏳ Pending Customers
+        </h3>
+
+        <a href="{{ url_for('pending_customers') }}">
+            View Pending Customers
+        </a>
+
+    </div>
+
+
+</div>
+```
+
+</div>
+
+</body>
+
+</html>

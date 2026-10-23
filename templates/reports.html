@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Reports</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+<div class="sidebar">
+
+<h2>Udhaar System</h2>
+
+<a href="/dashboard">🏠 Dashboard</a>
+<a href="/customers">👥 Customers</a>
+<a href="/udhaar">💰 Udhaar</a>
+<a href="/payments">💵 Payments</a>
+<a href="/reports">📊 Reports</a>
+<a href="/">🚪 Logout</a>
+
+</div>
+
+<div class="main-content">
+
+<h1>📊 Reports</h1>
+
+<h2>Customer Wise Report</h2>
+
+<table>
+
+<tr>
+
+<th>Customer Name</th>
+<th>Total Udhaar</th>
+<th>Total Paid</th>
+<th>Remaining Balance</th>
+
+</tr>
+
+{% for report in reports %}
+
+<tr>
+
+<td>{{ report.customer_name }}</td>
+
+<td>₹{{ report.total_udhaar }}</td>
+
+<td>₹{{ report.total_paid }}</td>
+
+<td>
+
+{% if report.total_udhaar - report.total_paid > 0 %}
+
+<span style="color:red;font-weight:bold;">
+₹{{ report.total_udhaar - report.total_paid }}
+</span>
+
+{% else %}
+
+<span style="color:green;font-weight:bold;">
+₹0
+</span>
+
+{% endif %}
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+</body>
+
+</html>
